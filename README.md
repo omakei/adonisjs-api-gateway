@@ -706,7 +706,7 @@ You can use this endpoint to show role
 ## Testing
 
 ```bash
-    composer test
+    node ace test
 ```
 
 ## Changelog
