@@ -1,0 +1,94 @@
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+/login:
+  post:
+    tags:
+      - Authentication
+    security: []
+    description: Login
+    parameters:
+      - name: credentials
+        in: body
+        required: true
+        schema:
+          properties:
+            email:
+              type: string
+              example: 'omakei96@gmail.com'
+              required: true
+            password:
+              type: string
+              example: 'password'
+              required: true
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Success
+/refresh:
+  post:
+    tags:
+      - Authentication
+    security:
+      - bearerAuth: []
+    description: Refresh Token
+    parameters:
+      - name: credentials
+        in: body
+        required: true
+        schema:
+          properties:
+            refresh_token:
+              type: string
+              example: '6d5af6467423f0c1cabb82d1868fb5aa31996ec3dc15f019b7b51ff9d2c7d856'
+              required: true
+    produces:
+      - application/json
+    responses:
+      default:
+        description: Success
+      content:
+        application/json:
+          sechma:
+            token:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: 'token refreshed successful'
+                status:
+                  type: boolean
+                  example: true
+                payload:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: 'bearer'
+                    token:
+                      type: string
+                      example: 'eyJhbGciOiJSUzI1NiJ9.eyJkYXRhIjp7InVzZXIiOnsiaWQiOjEsInVzZXJuYW1lIjoiTWljaGFlbCBPbWFrZWkiLCJlbWFpbCI6Im9tYWtlaTkxQGdtYWlsLmNvbSIsImlzX2FjdGl2ZSI6dHJ1ZX0sInJvbGVzIjpbeyJpZCI6MSwibmFtZSI6Im1hbmFnZW1lbnQgbWVt'
+                    refreshToken:
+                      type: string
+                      example: 'a8ef6bc3dc3931a56494ca1ed30d6243bc2fbb7fa45c9c1b2100c56430fbda30'
+                    expires_at:
+                      type: string
+                      format: date-time
+                      example: '2022-09-02T10:34:15.971+03:00'
+
+/logout:
+  post:
+    tags:
+      - Authentication
+    security:
+      - bearerAuth: []
+    description: Logout
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Success
