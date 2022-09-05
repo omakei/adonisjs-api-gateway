@@ -2,8 +2,6 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { UserFactory } from 'Database/factories'
 import { mockCustomerService } from '../test_helpers/mock'
-import sinon from 'sinon'
-import SchemaValidator from 'App/Action/SchemaValidator'
 
 test.group('Authentication ', (group) => {
   group.each.setup(async () => {

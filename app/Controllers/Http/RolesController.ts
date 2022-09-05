@@ -5,7 +5,11 @@ import Role from 'App/Models/Role'
 import Cache from '@ioc:Adonis/Addons/Cache'
 
 export default class RolesController {
-  public async index({ response }: HttpContextContract) {
+  public async index({ response, user, bouncer }: HttpContextContract) {
+    console.log(user, 'omakei')
+
+    await bouncer.authorize('canDo', user, { role: 'admin', permission: 'roles.view' })
+
     const roles = await Cache.remember('roles', 60000, async () => {
       return (await Role.all()).map((role) => role.serialize())
     })
@@ -34,7 +38,7 @@ export default class RolesController {
       .related('permissions')
       .attach([...payload.permissions.map((permission) => permission.id)])
     return response.sendApiResponse({
-      message: 'fetched successful.',
+      message: 'created successful.',
       status: true,
       payload: role,
     })
@@ -57,7 +61,7 @@ export default class RolesController {
       .related('permissions')
       .attach([...payload.permissions.map((permission) => permission.id)])
     return response.sendApiResponse({
-      message: 'fetched successful.',
+      message: 'updated successful.',
       status: true,
       payload: role,
     })

@@ -6,7 +6,9 @@ Route.group(() => {
   Route.put('/update/:id', 'UsersController.update')
   Route.delete('/delete/:id', 'UsersController.delete')
   Route.get('/index', 'UsersController.index')
-}).prefix('api-gateway/users')
+})
+  .prefix('api-gateway/users')
+  .middleware('check_jwt')
 
 Route.group(() => {
   Route.post('/store', 'RolesController.store')
@@ -15,4 +17,6 @@ Route.group(() => {
   Route.get('/show/:id', 'RolesController.show')
   Route.delete('/delete/:id', 'RolesController.delete')
   Route.get('/index', 'RolesController.index')
-}).prefix('api-gateway/roles')
+})
+  .prefix('api-gateway/roles')
+  .middleware('check_jwt')

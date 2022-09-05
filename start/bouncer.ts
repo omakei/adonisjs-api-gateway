@@ -6,6 +6,7 @@
  */
 
 import Bouncer from '@ioc:Adonis/Addons/Bouncer'
+import { User, hasRoleOrPermission } from 'Contracts/context'
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +30,13 @@ import Bouncer from '@ioc:Adonis/Addons/Bouncer'
 | NOTE: Always export the "actions" const from this file
 |****************************************************************
 */
-export const { actions } = Bouncer
+export const { actions } = Bouncer.define(
+  'canDo',
+  (user: User, check: { role: string; permission: string }) => {
+    console.log(user, 'omakei kwenye bouncer')
+    return hasRoleOrPermission(user, check)
+  }
+)
 
 /*
 |--------------------------------------------------------------------------

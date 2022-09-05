@@ -17,7 +17,12 @@ test.group('User controller', (group) => {
       await user.related('roles').attach([(await Role.first())?.id as number])
       await user.related('permissions').attach([...permissions.map((permission) => permission.id)])
     })
-    const response = await client.get('api-gateway/users/index')
+    const response1 = await client
+      .post('/login')
+      .form({ email: users[0].email, password: 'secret' })
+    const response = await client
+      .get('api-gateway/users/index')
+      .bearerToken(response1.body().payload.token)
     response.assertStatus(200)
 
     expect(response.body().payload.length).toBe(6)
@@ -26,14 +31,22 @@ test.group('User controller', (group) => {
   })
 
   test('it can register user', async ({ client, expect }) => {
-    const response = await client.post('api-gateway/users/register').form({
-      username: 'omakei',
-      email: 'omakei96@gmail.com',
+    const user = await UserFactory.merge({
+      email: 'omakei5@gmail.com',
       password: 'secret',
-      country: 'TZ',
-      roles: [{ id: 1 }, { id: 2 }, { id: 3 }],
-      permissions: [{ id: 1 }, { id: 2 }, { id: 3 }],
-    })
+    }).create()
+    const response1 = await client.post('/login').form({ email: user.email, password: 'secret' })
+    const response = await client
+      .post('api-gateway/users/register')
+      .bearerToken(response1.body().payload.token)
+      .form({
+        username: 'omakei',
+        email: 'omakei96@gmail.com',
+        password: 'secret',
+        country: 'TZ',
+        roles: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        permissions: [{ id: 1 }, { id: 2 }, { id: 3 }],
+      })
     response.assertStatus(200)
     expect(response.body()).toStrictEqual({
       message: 'user created successful.',
@@ -54,7 +67,10 @@ test.group('User controller', (group) => {
       email: 'omakei@gmail.com',
       password: 'password',
     }).create()
-    const response = await client.get('api-gateway/users/change-user-status/' + user.id)
+    const response1 = await client.post('/login').form({ email: user.email, password: 'password' })
+    const response = await client
+      .get('api-gateway/users/change-user-status/' + user.id)
+      .bearerToken(response1.body().payload.token)
     response.assertStatus(200)
     expect(response.body()).toStrictEqual({
       message: 'user status updated successful.',
@@ -77,14 +93,18 @@ test.group('User controller', (group) => {
       email: 'omakeii@gmail.com',
       password: 'password',
     }).create()
-    const response = await client.put('api-gateway/users/update/' + user.id).form({
-      username: 'omakei',
-      email: 'omakei96@gmail.com',
-      password: 'secret',
-      country: 'TZ',
-      roles: [{ id: 1 }, { id: 2 }, { id: 3 }],
-      permissions: [{ id: 1 }, { id: 2 }, { id: 3 }],
-    })
+    const response1 = await client.post('/login').form({ email: user.email, password: 'password' })
+    const response = await client
+      .put('api-gateway/users/update/' + user.id)
+      .bearerToken(response1.body().payload.token)
+      .form({
+        username: 'omakei',
+        email: 'omakei96@gmail.com',
+        password: 'secret',
+        country: 'TZ',
+        roles: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        permissions: [{ id: 1 }, { id: 2 }, { id: 3 }],
+      })
     response.assertStatus(200)
     expect(response.body()).toStrictEqual({
       message: 'user updated successful.',
@@ -107,7 +127,10 @@ test.group('User controller', (group) => {
       email: 'omakei9@gmail.com',
       password: 'password',
     }).create()
-    const response = await client.delete('api-gateway/users/delete/' + user.id)
+    const response1 = await client.post('/login').form({ email: user.email, password: 'password' })
+    const response = await client
+      .delete('api-gateway/users/delete/' + user.id)
+      .bearerToken(response1.body().payload.token)
     response.assertStatus(200)
     expect(response.body()).toStrictEqual({
       message: 'user status deleted successful.',
