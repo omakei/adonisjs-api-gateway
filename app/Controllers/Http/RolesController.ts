@@ -5,23 +5,29 @@ import Role from 'App/Models/Role'
 import Cache from '@ioc:Adonis/Addons/Cache'
 
 export default class RolesController {
-  public async index({ response, user, bouncer }: HttpContextContract) {
-    console.log(user, 'omakei')
-
-    await bouncer.authorize('canDo', user, { role: 'admin', permission: 'roles.view' })
+  public async index(ctx: HttpContextContract) {
+    await ctx.bouncer.authorize('hasRoleOrPermission' as never, {
+      role: 'admin',
+      permission: 'roles.view',
+    })
 
     const roles = await Cache.remember('roles', 60000, async () => {
       return (await Role.all()).map((role) => role.serialize())
     })
 
-    return response.sendApiResponse({
+    return ctx.response.sendApiResponse({
       message: 'fetched successful.',
       status: true,
       payload: roles,
     })
   }
 
-  public async store({ request, response }: HttpContextContract) {
+  public async store({ request, response, bouncer }: HttpContextContract) {
+    await bouncer.authorize('hasRoleOrPermission' as never, {
+      role: 'admin',
+      permission: 'roles.create',
+    })
+
     const validations = schema.create({
       name: schema.string([rules.required()]),
       description: schema.string(),
@@ -44,7 +50,12 @@ export default class RolesController {
     })
   }
 
-  public async update({ request, response }: HttpContextContract) {
+  public async update({ request, response, bouncer }: HttpContextContract) {
+    await bouncer.authorize('hasRoleOrPermission' as never, {
+      role: 'admin',
+      permission: 'roles.update',
+    })
+
     const validations = schema.create({
       name: schema.string([rules.required()]),
       description: schema.string(),
@@ -67,7 +78,12 @@ export default class RolesController {
     })
   }
 
-  public async show({ request, response }: HttpContextContract) {
+  public async show({ request, response, bouncer }: HttpContextContract) {
+    await bouncer.authorize('hasRoleOrPermission' as never, {
+      role: 'admin',
+      permission: 'roles.view',
+    })
+
     const role = await Role.findOrFail(request.param('id'))
 
     return response.sendApiResponse({
@@ -77,7 +93,12 @@ export default class RolesController {
     })
   }
 
-  public async delete({ request, response }: HttpContextContract) {
+  public async delete({ request, response, bouncer }: HttpContextContract) {
+    await bouncer.authorize('hasRoleOrPermission' as never, {
+      role: 'admin',
+      permission: 'roles.delete',
+    })
+
     const role = await Role.findOrFail(request.param('id'))
     role.delete()
     return response.sendApiResponse({
@@ -87,7 +108,12 @@ export default class RolesController {
     })
   }
 
-  public async permissions({ response }: HttpContextContract) {
+  public async permissions({ response, bouncer }: HttpContextContract) {
+    await bouncer.authorize('hasRoleOrPermission' as never, {
+      role: 'admin',
+      permission: 'roles.delete',
+    })
+
     const permissions = await Permission.all()
     return response.sendApiResponse({
       message: 'fetched successful.',

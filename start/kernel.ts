@@ -45,5 +45,6 @@ Server.middleware.register([
 Server.middleware.registerNamed({
   throttle: () => import('@adonisjs/limiter/build/throttle'),
   check_jwt: () => import('App/Middleware/CheckJwt'),
+  auth: () => import('App/Middleware/Auth'),
   check_bbtz_header: () => import('App/Middleware/CheckBbtzHeader'),
 })

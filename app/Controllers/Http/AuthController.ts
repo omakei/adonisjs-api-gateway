@@ -31,7 +31,7 @@ export default class AuthController {
           ],
         })
       }
-      const jwt = await auth.use('jwt').generate(user as User, {
+      const jwt = await auth.use('jwt').login(user as User, {
         payload: await this.jwtPayload(user),
       })
 

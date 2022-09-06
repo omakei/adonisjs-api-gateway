@@ -3,7 +3,12 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import User from 'App/Models/User'
 
 export default class UsersController {
-  public async index({ response }: HttpContextContract) {
+  public async index({ response, bouncer }: HttpContextContract) {
+    await bouncer.authorize('hasRoleOrPermission' as never, {
+      role: 'admin',
+      permission: 'users.view',
+    })
+
     const users = await User.query().preload('permissions').preload('roles')
 
     return response.sendApiResponse({
@@ -12,7 +17,12 @@ export default class UsersController {
       payload: users.map((user) => user.serialize()),
     })
   }
-  public async register({ request, response, logger }: HttpContextContract) {
+  public async register({ request, response, logger, bouncer }: HttpContextContract) {
+    await bouncer.authorize('hasRoleOrPermission' as never, {
+      role: 'admin',
+      permission: 'users.create',
+    })
+
     const validations = schema.create({
       username: schema.string([
         rules.required(),
@@ -63,7 +73,12 @@ export default class UsersController {
     }
   }
 
-  public async changeUserStatus({ request, response }: HttpContextContract) {
+  public async changeUserStatus({ request, response, bouncer }: HttpContextContract) {
+    await bouncer.authorize('hasRoleOrPermission' as never, {
+      role: 'admin',
+      permission: 'users.update',
+    })
+
     const user = await User.findOrFail(request.param('id'))
     user.isActive = !user.isActive
     user.save()
@@ -75,7 +90,12 @@ export default class UsersController {
     })
   }
 
-  public async update({ request, response, logger }: HttpContextContract) {
+  public async update({ request, response, logger, bouncer }: HttpContextContract) {
+    await bouncer.authorize('hasRoleOrPermission' as never, {
+      role: 'admin',
+      permission: 'users.update',
+    })
+
     const user = await User.findOrFail(request.param('id'))
     const validations = schema.create({
       username: schema.string([
@@ -142,7 +162,12 @@ export default class UsersController {
     }
   }
 
-  public async delete({ request, response }: HttpContextContract) {
+  public async delete({ request, response, bouncer }: HttpContextContract) {
+    await bouncer.authorize('hasRoleOrPermission' as never, {
+      role: 'admin',
+      permission: 'users.delete',
+    })
+
     const user = await User.findOrFail(request.param('id'))
     user.delete()
 

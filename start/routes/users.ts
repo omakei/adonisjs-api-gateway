@@ -8,7 +8,7 @@ Route.group(() => {
   Route.get('/index', 'UsersController.index')
 })
   .prefix('api-gateway/users')
-  .middleware('check_jwt')
+  .middleware('auth:jwt')
 
 Route.group(() => {
   Route.post('/store', 'RolesController.store')
@@ -19,4 +19,4 @@ Route.group(() => {
   Route.get('/index', 'RolesController.index')
 })
   .prefix('api-gateway/roles')
-  .middleware('check_jwt')
+  .middleware('auth:jwt')

@@ -34,6 +34,20 @@ export default class ExceptionHandler extends HttpExceptionHandler {
       })
     }
 
+    if (error.code === 'E_AUTHORIZATION_FAILURE') {
+      return ctx.response.status(403).sendApiResponse({
+        message: 'authorization failed.',
+        status: false,
+        errors: [
+          {
+            message: 'Not authorized to perform this action.',
+            field: 'authorization',
+            rule: 'authorization',
+          },
+        ],
+      })
+    }
+
     /**
      * Forward rest of the exceptions to the parent class
      */

@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon/src/datetime'
+import UserModel from 'App/Models/User'
 
 declare module '@ioc:Adonis/Core/HttpContext' {
   interface HttpContextContract {
@@ -31,17 +32,31 @@ export interface Permission {
   updated_at: DateTime
 }
 
-export function hasRoleOrPermission(
-  user: User,
-  check: { role: string; permission: string }
-): boolean {
+export async function hasRoleOrPermission(
+  user: UserModel,
+  check: {
+    role: string
+    permission: string
+  }
+): Promise<boolean> {
+  await user.load((loader) => {
+    loader.load('roles').load('permissions')
+  })
+
   const foundRole = user.roles.find((role) => role.name === check.role)
-  const foundPermission = user.permissions.find((permission) => permission.name === check.role)
+  const foundPermission = user.permissions.find(
+    (permission) => permission.name === check.permission
+  )
 
   // eslint-disable-next-line eqeqeq
-  if (foundPermission == null || foundRole == null) {
-    return false
+  if (foundPermission?.id != null) {
+    return true
   }
 
-  return true
+  // eslint-disable-next-line eqeqeq
+  if (foundRole?.id != null) {
+    return true
+  }
+
+  return false
 }

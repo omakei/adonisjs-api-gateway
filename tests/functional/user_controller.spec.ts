@@ -2,6 +2,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import Permission from 'App/Models/Permission'
 import Role from 'App/Models/Role'
+import User from 'App/Models/User'
 import { UserFactory } from 'Database/factories'
 
 test.group('User controller', (group) => {
@@ -26,16 +27,13 @@ test.group('User controller', (group) => {
     response.assertStatus(200)
 
     expect(response.body().payload.length).toBe(6)
-    expect(response.body().payload[0].roles.length).toBe(7)
-    expect(response.body().payload[0].permissions.length).toBe(12)
+    expect(response.body().payload[0].roles.length).not.toBe(0)
+    expect(response.body().payload[0].permissions.length).not.toBe(0)
   })
 
   test('it can register user', async ({ client, expect }) => {
-    const user = await UserFactory.merge({
-      email: 'omakei5@gmail.com',
-      password: 'secret',
-    }).create()
-    const response1 = await client.post('/login').form({ email: user.email, password: 'secret' })
+    const user = await User.first()
+    const response1 = await client.post('/login').form({ email: user?.email, password: 'password' })
     const response = await client
       .post('api-gateway/users/register')
       .bearerToken(response1.body().payload.token)
@@ -63,24 +61,21 @@ test.group('User controller', (group) => {
   })
 
   test('it can change user status', async ({ client, expect }) => {
-    const user = await UserFactory.merge({
-      email: 'omakei@gmail.com',
-      password: 'password',
-    }).create()
-    const response1 = await client.post('/login').form({ email: user.email, password: 'password' })
+    const user = await User.first()
+    const response1 = await client.post('/login').form({ email: user?.email, password: 'password' })
     const response = await client
-      .get('api-gateway/users/change-user-status/' + user.id)
+      .get('api-gateway/users/change-user-status/' + user?.id)
       .bearerToken(response1.body().payload.token)
     response.assertStatus(200)
     expect(response.body()).toStrictEqual({
       message: 'user status updated successful.',
       status: true,
       payload: {
-        username: user.username,
+        username: user?.username,
         country: null,
         is_active: false,
         remember_me_token: null,
-        email: 'omakei@gmail.com',
+        email: user?.email,
         created_at: response.body().payload.created_at,
         updated_at: response.body().payload.updated_at,
         id: response.body().payload.id,
@@ -89,13 +84,10 @@ test.group('User controller', (group) => {
   })
 
   test('it can update user', async ({ client, expect }) => {
-    const user = await UserFactory.merge({
-      email: 'omakeii@gmail.com',
-      password: 'password',
-    }).create()
-    const response1 = await client.post('/login').form({ email: user.email, password: 'password' })
+    const user = await User.first()
+    const response1 = await client.post('/login').form({ email: user?.email, password: 'password' })
     const response = await client
-      .put('api-gateway/users/update/' + user.id)
+      .put('api-gateway/users/update/' + user?.id)
       .bearerToken(response1.body().payload.token)
       .form({
         username: 'omakei',
@@ -124,23 +116,27 @@ test.group('User controller', (group) => {
 
   test('it can delete user', async ({ client, expect }) => {
     const user = await UserFactory.merge({
-      email: 'omakei9@gmail.com',
+      email: 'omakei1@gmail.com',
       password: 'password',
     }).create()
-    const response1 = await client.post('/login').form({ email: user.email, password: 'password' })
+
+    const response1 = await client.post('/login').form({ email: user?.email, password: 'password' })
+    const permissions = await Permission.all()
+    await user.related('permissions').attach([...permissions.map((permission) => permission.id)])
+
     const response = await client
-      .delete('api-gateway/users/delete/' + user.id)
+      .delete('api-gateway/users/delete/' + user?.id)
       .bearerToken(response1.body().payload.token)
     response.assertStatus(200)
     expect(response.body()).toStrictEqual({
       message: 'user status deleted successful.',
       status: true,
       payload: {
-        username: user.username,
+        username: user?.username,
         country: null,
         is_active: true,
         remember_me_token: null,
-        email: 'omakei9@gmail.com',
+        email: user?.email,
         created_at: response.body().payload.created_at,
         updated_at: response.body().payload.updated_at,
         id: response.body().payload.id,

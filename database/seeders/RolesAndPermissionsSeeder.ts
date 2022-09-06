@@ -19,7 +19,7 @@ export default class extends BaseSeeder {
         description: 'csm team',
       },
       {
-        name: 'admin system manager',
+        name: 'admin',
         description: 'admin system manager',
       },
       {
@@ -42,10 +42,15 @@ export default class extends BaseSeeder {
       { name: 'users.update' },
       { name: 'users.delete' },
 
-      { name: 'suctomers.create' },
-      { name: 'suctomers.view' },
-      { name: 'suctomers.update' },
-      { name: 'suctomers.delete' },
+      { name: 'roles.create' },
+      { name: 'roles.view' },
+      { name: 'roles.update' },
+      { name: 'roles.delete' },
+
+      { name: 'cuctomers.create' },
+      { name: 'cuctomers.view' },
+      { name: 'cuctomers.update' },
+      { name: 'cuctomers.delete' },
 
       { name: 'asserts.create' },
       { name: 'asserts.view' },
