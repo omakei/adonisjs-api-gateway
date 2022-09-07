@@ -8,7 +8,7 @@ export default class RolesController {
   public async index(ctx: HttpContextContract) {
     await ctx.bouncer.authorize('hasRoleOrPermission' as never, {
       roles: ['admin'],
-      permission: 'roles.views',
+      permission: 'roles.view',
     })
 
     const roles = await Cache.remember('roles', 60000, async () => {
