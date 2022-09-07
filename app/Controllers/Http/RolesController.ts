@@ -7,8 +7,8 @@ import Cache from '@ioc:Adonis/Addons/Cache'
 export default class RolesController {
   public async index(ctx: HttpContextContract) {
     await ctx.bouncer.authorize('hasRoleOrPermission' as never, {
-      role: 'admin',
-      permission: 'roles.view',
+      roles: ['admin'],
+      permission: 'roles.views',
     })
 
     const roles = await Cache.remember('roles', 60000, async () => {
@@ -24,7 +24,7 @@ export default class RolesController {
 
   public async store({ request, response, bouncer }: HttpContextContract) {
     await bouncer.authorize('hasRoleOrPermission' as never, {
-      role: 'admin',
+      roles: ['admin'],
       permission: 'roles.create',
     })
 
@@ -52,7 +52,7 @@ export default class RolesController {
 
   public async update({ request, response, bouncer }: HttpContextContract) {
     await bouncer.authorize('hasRoleOrPermission' as never, {
-      role: 'admin',
+      roles: ['admin'],
       permission: 'roles.update',
     })
 
@@ -80,7 +80,7 @@ export default class RolesController {
 
   public async show({ request, response, bouncer }: HttpContextContract) {
     await bouncer.authorize('hasRoleOrPermission' as never, {
-      role: 'admin',
+      roles: ['admin'],
       permission: 'roles.view',
     })
 
@@ -95,7 +95,7 @@ export default class RolesController {
 
   public async delete({ request, response, bouncer }: HttpContextContract) {
     await bouncer.authorize('hasRoleOrPermission' as never, {
-      role: 'admin',
+      roles: ['admin'],
       permission: 'roles.delete',
     })
 
@@ -110,7 +110,7 @@ export default class RolesController {
 
   public async permissions({ response, bouncer }: HttpContextContract) {
     await bouncer.authorize('hasRoleOrPermission' as never, {
-      role: 'admin',
+      roles: ['admin'],
       permission: 'roles.delete',
     })
 

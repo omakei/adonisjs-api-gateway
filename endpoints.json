@@ -18,7 +18,7 @@
       "endpoint": "/activation-codes",
       "backend": [
         {
-          "host": ["http://127.0.0.1:3330"],
+          "host": ["http://192.168.10.119:3333"],
           "url_pattern": "/",
           "timeout": 2000
         }

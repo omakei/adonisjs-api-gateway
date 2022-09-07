@@ -66,8 +66,8 @@ export default class extends BaseSeeder {
 
     await user.related('roles').attach([...roles.map((role) => role.id)])
     await user.related('permissions').attach([...permissions.map((permission) => permission.id)])
-    roles.forEach((role) =>
-      role.related('permissions').attach([...permissions.map((permission) => permission.id)])
-    )
+    // roles.forEach((role) =>
+    //   role.related('permissions').attach([...permissions.map((permission) => permission.id)])
+    // )
   }
 }

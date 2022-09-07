@@ -35,7 +35,7 @@ export interface Permission {
 export async function hasRoleOrPermission(
   user: UserModel,
   check: {
-    role: string
+    roles: Array<string>
     permission: string
   }
 ): Promise<boolean> {
@@ -43,7 +43,10 @@ export async function hasRoleOrPermission(
     loader.load('roles').load('permissions')
   })
 
-  const foundRole = user.roles.find((role) => role.name === check.role)
+  const foundRole = user.roles.find((role) =>
+    check.roles.find((requiredRole) => role.name === requiredRole)
+  )
+
   const foundPermission = user.permissions.find(
     (permission) => permission.name === check.permission
   )

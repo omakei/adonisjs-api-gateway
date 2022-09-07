@@ -5,7 +5,7 @@ import User from 'App/Models/User'
 export default class UsersController {
   public async index({ response, bouncer }: HttpContextContract) {
     await bouncer.authorize('hasRoleOrPermission' as never, {
-      role: 'admin',
+      roles: ['admin'],
       permission: 'users.view',
     })
 
@@ -19,7 +19,7 @@ export default class UsersController {
   }
   public async register({ request, response, logger, bouncer }: HttpContextContract) {
     await bouncer.authorize('hasRoleOrPermission' as never, {
-      role: 'admin',
+      roles: ['admin'],
       permission: 'users.create',
     })
 
@@ -75,7 +75,7 @@ export default class UsersController {
 
   public async changeUserStatus({ request, response, bouncer }: HttpContextContract) {
     await bouncer.authorize('hasRoleOrPermission' as never, {
-      role: 'admin',
+      roles: ['admin'],
       permission: 'users.update',
     })
 
@@ -92,7 +92,7 @@ export default class UsersController {
 
   public async update({ request, response, logger, bouncer }: HttpContextContract) {
     await bouncer.authorize('hasRoleOrPermission' as never, {
-      role: 'admin',
+      roles: ['admin'],
       permission: 'users.update',
     })
 
@@ -164,7 +164,7 @@ export default class UsersController {
 
   public async delete({ request, response, bouncer }: HttpContextContract) {
     await bouncer.authorize('hasRoleOrPermission' as never, {
-      role: 'admin',
+      roles: ['admin'],
       permission: 'users.delete',
     })
 

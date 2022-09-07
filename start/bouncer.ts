@@ -34,7 +34,7 @@ import { User as TokenUser, hasRoleOrPermission } from 'Contracts/context'
 
 Bouncer.define(
   'hasRoleOrPermission',
-  async (user: User, check: { role: string; permission: string }) => {
+  async (user: User, check: { roles: Array<string>; permission: string }) => {
     return await hasRoleOrPermission(user, check)
   }
 )
